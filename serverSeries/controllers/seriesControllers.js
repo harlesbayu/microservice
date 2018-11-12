@@ -5,7 +5,7 @@ module.exports = {
 
   create: function (req,res) {
 
-    let dataTag = seriesTag(req.body.tag)
+    // let dataTag = seriesTag(req.body.tag)
 
     let dataMovie = new Series ({
       title: req.body.title,
@@ -13,20 +13,22 @@ module.exports = {
       posterPath: req.body.posterPath,
       popularity: req.body.popularity,
       rating: req.body.rating,
-      tag: dataTag,
+      tag: req.body.tag,
       status: req.body.status,
+      backgroundPath: req.body.backgroundPath,
+      releaseDate: req.body.releaseDate,
       secondId: req.body.secondId
     })
 
     dataMovie.save()
       .then((response) => {
         res.status(201).json({
-          message: `create tv favorite ${req.body.title} success`,
+          message: `create tv series ${req.body.title} success`,
           data: response
         })
       }).catch((err) => {
         res.status(500).json({
-          message: `create tv favorite ${req.body.title} failed`,
+          message: `create tv series ${req.body.title} failed`,
           errors: err
         })
       });
@@ -37,6 +39,7 @@ module.exports = {
 
     Series.find()
       .then((response) => {
+        console.log(response)
         res.status(201).json({
           info: 'tv found successfully',
           data: response

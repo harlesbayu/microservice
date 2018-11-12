@@ -1,11 +1,12 @@
 const Movie = require('../models/movie')
 const movietag = require('../helpers/movietag')
+var ObjectID = require('mongodb').ObjectId; 
 
 module.exports = {
 
   create: function (req,res) {
 
-    let dataTag = movietag(req.body.tag)
+    // let dataTag = movietag(req.body.tag)
 
     let dataMovie = new Movie ({
       title: req.body.title,
@@ -13,8 +14,10 @@ module.exports = {
       posterPath: req.body.posterPath,
       popularity: req.body.popularity,
       rating: req.body.rating,
-      tag: dataTag,
+      tag: req.body.tag,
       status: req.body.status,
+      backgroundPath: req.body.backgroundPath,
+      releaseDate: req.body.releaseDate,
       secondId: req.body.secondId
     })
 

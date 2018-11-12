@@ -1,49 +1,65 @@
 const axios = require('axios')
 const redis = require('redis'),
       client = redis.createClient()
-const uriMovie = 'http://localhost:3001'
-const uriTv = 'http://localhost:3002'
 
 module.exports = {
 
-  findAll: function(req,res) {
-
-    client.get('entertainme', (err,reply) => {
-      if(reply) {
-        res.status(201).json(JSON.parse(reply))
-      } else if (reply === null)  {
-          getDataMovie(req,res)   
-      } else {}
+  findAllMovie: function(req,res) {  
+    return new Promise((resolve, reject) => {
+      client.get('entertainme/movies', (err,reply) => {
+        if(reply) {
+          resolve(JSON.parse(reply))
+        } else {
+          getDataMovie(resolve,reject)    
+        } 
+      })
     })
    
   },
 
+  findAllSeries: function(req,res) {
 
-  createDataMovie: function(req,res) {
-    let data = req.body
-    axios({
-      method: 'POST',
-      url: `${process.env.URIMOVIE}/movies`,
-      data
+    return new Promise((resolve, reject) => {
+      client.get('entertainme/series', (err,reply) => {
+        if(reply) {
+          resolve(JSON.parse(reply))
+        } else {
+          getDataSeries(resolve, reject)
+        } 
+      })
     })
-      .then((response) => {
-        getDataMovie(req,res)
-      }).catch((err) => {
-        // console.log(err)
-      });
+    
+  },
+
+  createDataMovie: function(args) {
+    return new Promise((resolve, reject) => {
+      let data = args
+      axios({
+        method: 'POST',
+        url: `${process.env.URIMOVIE}/movies/create`,
+        data
+      })
+        .then((response) => {
+          getDataMovie(resolve,reject) 
+          resolve(response.data)
+        }).catch((err) => {
+          reject(err)
+        });
+    })
   },
 
   createDataTv: function(req,res) {
+    
     let data = req.body
     axios({
       method: 'POST',
-      url: `${process.env.URITV}/tv`,
+      url: `${process.env.URITV}/tv/create`,
       data
     })
       .then((response) => {
-        getDataMovie(req,res)
+        getDataSeries(req,res)
       }).catch((err) => {
-        // console.log(err)
+        console.log(err)
       });
   }
  
@@ -51,29 +67,31 @@ module.exports = {
 }
 
 
-function getDataMovie (req,res) {
-
-    let movies = axios({
+function getDataMovie (resolve,reject) {
+    axios({
       method: 'GET',
       url: `${process.env.URIMOVIE}/movies`
     })
-
-    let tv =  axios({
-        method: 'GET',
-        url: `${process.env.URITV}/tv`
-      })
-
-    Promise.all([movies, tv])
     .then((response) => {
-      
-      let data = {
-        movies: response[0].data,
-        tv: response[1].data
-      }
+      client.set('movies', JSON.stringify(response.data), 'EX', 10)
+      resolve(response.data)
+    }).catch((err) => {
+     reject(err)
+    });
 
-      client.set('entertainme', JSON.stringify(data), 'EX', 10)
-      res.status(201).json(data)
+}
 
-    }).catch((err) => {});
+function getDataSeries (resolve,reject) {
+ 
+    axios({
+      method: 'GET',
+      url: `${process.env.URITV}/tv`
+    })
+    .then((response) => {
+      client.set('entertainme/series', JSON.stringify(response.data), 'EX', 10)
+      resolve(response.data)
+    }).catch((err) => {
+      reject(err)
+    });
 
 }
