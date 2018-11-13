@@ -31,12 +31,11 @@ module.exports = {
     
   },
 
-  findOneMovie: function(movieId) {
+  findOneMovie: function(movie) {
     return new Promise((resolve, reject) => {
-      let data = args
       axios({
         method: 'GET',
-        url: `${process.env.URIMOVIE}/movies/${movieId}`,
+        url: `${process.env.URIMOVIE}/movies/${movie._id}`,
       })
         .then((response) => {
           getDataMovie(resolve,reject) 

@@ -1,7 +1,7 @@
 const { GraphQLSchema, GraphQLObjectType, GraphQLList, GraphQLString } = require('graphql')
 const MovieType  = require('./MovieType')
 const SeriesType = require('./SeriesType')
-const { findAllMovie, findAllSeries, createDataMovie } = require('../controllers/entertainmeController')
+const { findAllMovie, findAllSeries, createDataMovie, findOneMovie } = require('../controllers/entertainmeController')
 
 
 
@@ -20,6 +20,21 @@ const query = new GraphQLObjectType({
         resolve: async () => {
           let tv = await findAllSeries()
           return tv.data
+        }
+      },
+      moviedetail: {
+        type: SeriesType,
+        args: {
+          _id: { type: GraphQLString }
+        },
+        resolve: async (_parent, args, _context) => {
+
+          try {
+            let response = await findOneMovie(args)
+            return response.movie
+          } catch (err) {
+            return err
+          }
         }
       }
     }
