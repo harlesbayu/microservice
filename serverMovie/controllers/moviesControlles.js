@@ -52,6 +52,17 @@ module.exports = {
 
   },
 
+  findOne: function(req,res) {
+    Movie.findById(req.params.id)
+      .then((response) => {
+        res.status(201).json({
+          movie: response
+        })
+      }).catch((err) => {
+        
+      });
+  },
+
   update: function(req,res) {
 
     let dataTag = movietag(req.body.tag)

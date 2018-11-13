@@ -31,6 +31,22 @@ module.exports = {
     
   },
 
+  findOneMovie: function(movieId) {
+    return new Promise((resolve, reject) => {
+      let data = args
+      axios({
+        method: 'GET',
+        url: `${process.env.URIMOVIE}/movies/${movieId}`,
+      })
+        .then((response) => {
+          getDataMovie(resolve,reject) 
+          resolve(response.data)
+        }).catch((err) => {
+          reject(err)
+        });
+    })
+  },
+
   createDataMovie: function(args) {
     return new Promise((resolve, reject) => {
       let data = args

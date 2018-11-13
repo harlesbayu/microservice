@@ -39,7 +39,6 @@ module.exports = {
 
     Series.find()
       .then((response) => {
-        console.log(response)
         res.status(201).json({
           info: 'tv found successfully',
           data: response

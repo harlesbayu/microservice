@@ -33,7 +33,6 @@ const mutation = new GraphQLObjectType({
       type: MovieType,
       args: {
         title: { type: GraphQLString },
-        title: { type: GraphQLString },
         overview: { type: GraphQLString },
         posterPath: { type: GraphQLString },
         popularity: { type: GraphQLString },
